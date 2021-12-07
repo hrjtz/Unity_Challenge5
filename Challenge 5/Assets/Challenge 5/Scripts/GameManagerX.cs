@@ -1,4 +1,4 @@
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using TMPro;
@@ -21,6 +21,10 @@ public class GameManagerX : MonoBehaviour
     private float spaceBetweenSquares = 2.5f; 
     private float minValueX = -3.75f; //  x value of the center of the left-most square
     private float minValueY = -3.75f; //  y value of the center of the bottom-most square
+
+    private int timeLeft = 60;
+    public TextMeshProUGUI timer;
+
     
     // Start the game, remove title screen, reset score, and adjust spawnRate based on difficulty button clicked
     public void StartGame(int difficulty)
@@ -31,6 +35,7 @@ public class GameManagerX : MonoBehaviour
         score = 0;
         UpdateScore(0);
         titleScreen.SetActive(false);
+        StartTime();
     }
 
     // While game is active spawn a random target
@@ -76,6 +81,7 @@ public class GameManagerX : MonoBehaviour
     // Stop game, bring up game over text and restart button
     public void GameOver()
     {
+        CancelInvoke("Countdown");
         gameOverText.gameObject.SetActive(true);
         restartButton.gameObject.SetActive(true);
         isGameActive = false;
@@ -87,4 +93,21 @@ public class GameManagerX : MonoBehaviour
         SceneManager.LoadScene(SceneManager.GetActiveScene().name);
     }
 
+    private void StartTime()
+    {
+        timer.text = "Time: " + timeLeft;
+        InvokeRepeating("Countdown", 1, 1);
+    }
+    public void Countdown()
+    {
+        if (timeLeft <= 0 && isGameActive)
+        {
+            GameOver();
+        }
+        else
+        {
+            timeLeft -= 1;
+            timer.text = "Time: " + timeLeft;
+        }
+    }
 }
